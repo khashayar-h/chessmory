@@ -1,0 +1,13 @@
+{
+  "name": "Chessmory — chess flashcards",
+  "short_name": "Chessmory",
+  "description": "Spaced repetition flashcards for chess tactics, openings, and endgames.",
+  "start_url": "/app",
+  "display": "standalone",
+  "background_color": "#1B1B1F",
+  "theme_color": "#1B1B1F",
+  "orientation": "portrait-primary",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
