@@ -1,6 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import FontImport from "./components/FontImport";
+import RequireAuth from "./components/RequireAuth";
 import Landing from "./pages/Landing";
+import Login from "./pages/Login";
 import AppShell from "./pages/AppShell";
 import DecksHome from "./pages/DecksHome";
 import AddCard from "./pages/AddCard";
@@ -15,8 +17,9 @@ export default function App() {
       <FontImport />
       <Routes>
         <Route path="/" element={<Landing />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/shared/:slug" element={<SharedDeck />} />
-        <Route path="/app" element={<AppShell />}>
+        <Route path="/app" element={<RequireAuth><AppShell /></RequireAuth>}>
           <Route index element={<DecksHome />} />
           <Route path="add" element={<AddCard />} />
           <Route path="deck/:deckId" element={<DecksHome />} />

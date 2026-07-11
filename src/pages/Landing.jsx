@@ -4,6 +4,8 @@ import FontImport from "../components/FontImport";
 import ChessBoard from "../components/ChessBoard";
 import { styles } from "../styles";
 import { APP_NAME, APP_TAGLINE, GITHUB_URL } from "../lib/brand";
+import { useAuth } from "../lib/useAuth";
+import { supabaseEnabled } from "../lib/supabaseClient";
 
 const FEATURES = [
   { icon: Layers, title: "Spaced repetition", body: "Cards resurface right when you're about to forget them — Again, Hard, Good, or Easy, each with its own schedule." },
@@ -13,6 +15,11 @@ const FEATURES = [
 ];
 
 export default function Landing() {
+  const { user } = useAuth();
+  const loggedIn = !supabaseEnabled || Boolean(user);
+  const ctaTo = loggedIn ? "/app" : "/login";
+  const ctaLabel = loggedIn ? "Open app" : "Sign in";
+
   return (
     <div style={styles.appShell}>
       <FontImport />
@@ -27,7 +34,7 @@ export default function Landing() {
             <Github size={15} /> Source
           </a>
         )}
-        <Link to="/app" style={{ ...styles.primaryBtn, marginLeft: 8 }}>Open app</Link>
+        <Link to={ctaTo} style={{ ...styles.primaryBtn, marginLeft: 8 }}>{ctaLabel}</Link>
       </header>
 
       <main style={{ flex: 1, overflowY: "auto" }}>
@@ -35,8 +42,8 @@ export default function Landing() {
           <div style={styles.landingHero}>
             <h1 style={styles.landingTitle}>{APP_NAME}</h1>
             <p style={styles.landingSub}>{APP_TAGLINE} — flashcards built for tactics, openings, and endgames, backed by a spaced-repetition scheduler.</p>
-            <Link to="/app" style={{ ...styles.primaryBtn, fontSize: 15, padding: "10px 20px" }}>
-              Open the app
+            <Link to={ctaTo} style={{ ...styles.primaryBtn, fontSize: 15, padding: "10px 20px" }}>
+              {loggedIn ? "Open the app" : "Sign in to start"}
             </Link>
           </div>
 

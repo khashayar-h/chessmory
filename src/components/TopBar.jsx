@@ -1,9 +1,16 @@
-import { Link } from "react-router-dom";
-import { Menu, Crown } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { Menu, Crown, LogOut } from "lucide-react";
 import { styles } from "../styles";
 import { APP_NAME, APP_TAGLINE } from "../lib/brand";
 
-export default function TopBar({ isMobile, onMenuClick }) {
+export default function TopBar({ isMobile, onMenuClick, user, onSignOut }) {
+  const navigate = useNavigate();
+
+  async function handleSignOut() {
+    await onSignOut();
+    navigate("/");
+  }
+
   return (
     <header style={styles.topBar}>
       {isMobile && (
@@ -18,6 +25,15 @@ export default function TopBar({ isMobile, onMenuClick }) {
         </span>
       </Link>
       {!isMobile && <span style={styles.brandTag}>{APP_TAGLINE}</span>}
+      <div style={styles.topBarSpacer} />
+      {user && (
+        <>
+          {!isMobile && <span style={{ fontSize: 12, color: "#6E6A5F" }}>{user.email}</span>}
+          <button className="btn-anim" onClick={handleSignOut} style={styles.navLink} aria-label="Sign out">
+            <LogOut size={14} /> {!isMobile && "Sign out"}
+          </button>
+        </>
+      )}
     </header>
   );
 }

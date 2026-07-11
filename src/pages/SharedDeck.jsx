@@ -5,20 +5,25 @@ import ChessBoard from "../components/ChessBoard";
 import FontImport from "../components/FontImport";
 import { styles } from "../styles";
 import { useLocalStore } from "../lib/localStore";
+import { useSharedDeck } from "../lib/supabaseStore";
+import { supabaseEnabled } from "../lib/supabaseClient";
 import { APP_NAME } from "../lib/brand";
 
 // Read-only viewer for a deck shared via /shared/:slug — no grading, no
-// account required. Runs against this browser's local data for now; once
-// accounts are wired to Supabase this will resolve the link for anyone.
+// account required. Works for any visitor: Supabase's "public read" RLS
+// policy allows this query with no session at all.
 export default function SharedDeck() {
   const { slug } = useParams();
-  const store = useLocalStore();
+  const localStore = useLocalStore();
+  const remote = useSharedDeck(slug);
+
+  const loading = supabaseEnabled ? remote.loading : localStore.loading;
+  const deck = supabaseEnabled ? remote.deck : localStore.decks.find((d) => d.shareSlug === slug && d.isPublic);
+  const cards = supabaseEnabled ? remote.cards : (deck ? localStore.cards.filter((c) => c.deckId === deck.id) : []);
+
   const [index, setIndex] = useState(0);
   const [showBack, setShowBack] = useState(false);
   const [flipped, setFlipped] = useState(false);
-
-  const deck = store.decks.find((d) => d.shareSlug === slug);
-  const cards = deck ? store.cards.filter((c) => c.deckId === deck.id) : [];
   const card = cards[index];
 
   return (
@@ -30,7 +35,7 @@ export default function SharedDeck() {
         </Link>
       </header>
       <main style={{ ...styles.main, maxWidth: 560, margin: "0 auto", width: "100%" }}>
-        {store.loading ? null : !deck || !deck.isPublic ? (
+        {loading ? null : !deck ? (
           <div className="fade-in" style={{ ...styles.center, flexDirection: "column", gap: 12, marginTop: 60 }}>
             <Lock size={22} color="#9C9587" />
             <div style={{ fontFamily: "'Newsreader', serif", fontSize: 20 }}>This deck isn't shared</div>

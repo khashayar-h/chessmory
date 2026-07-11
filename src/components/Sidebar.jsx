@@ -8,10 +8,10 @@ export default function Sidebar({ decks, dueCount, onAddDeck, isMobile, isOpen, 
   const { deckId } = useParams();
   const [newDeckName, setNewDeckName] = useState("");
 
-  function handleAdd() {
+  async function handleAdd() {
     const name = newDeckName.trim();
     if (!name) return;
-    const deck = onAddDeck(name);
+    const deck = await onAddDeck(name);
     setNewDeckName("");
     if (deck) navigate(`/app/deck/${deck.id}`);
     if (isMobile) onClose();

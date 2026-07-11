@@ -5,9 +5,16 @@ import TopBar from "../components/TopBar";
 import Sidebar from "../components/Sidebar";
 import { styles } from "../styles";
 import { useLocalStore } from "../lib/localStore";
+import { useSupabaseStore } from "../lib/supabaseStore";
+import { useAuth } from "../lib/useAuth";
+import { supabaseEnabled } from "../lib/supabaseClient";
 
 export default function AppShell() {
-  const store = useLocalStore();
+  const auth = useAuth();
+  const localStore = useLocalStore();
+  const supabaseStore = useSupabaseStore(auth.user?.id);
+  const store = supabaseEnabled ? supabaseStore : localStore;
+
   const [isMobile, setIsMobile] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -33,7 +40,12 @@ export default function AppShell() {
 
   return (
     <div style={styles.appShell}>
-      <TopBar isMobile={isMobile} onMenuClick={() => setSidebarOpen((o) => !o)} />
+      <TopBar
+        isMobile={isMobile}
+        onMenuClick={() => setSidebarOpen((o) => !o)}
+        user={supabaseEnabled ? auth.user : null}
+        onSignOut={auth.signOut}
+      />
       <div style={styles.body}>
         <Sidebar
           decks={store.decks}
